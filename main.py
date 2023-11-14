@@ -1,6 +1,7 @@
 import http.server
 import socketserver
 import json
+import os
 
 from sp_sector import get_sp_sector
 
@@ -25,5 +26,8 @@ class APIServerHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(b'Not Found')
 
 with socketserver.TCPServer(("", PORT), APIServerHandler) as httpd:
+    if not os.path.exists('data'):
+        os.makedirs('data')
+    
     print(f"Serving at http://localhost:{PORT}")
     httpd.serve_forever()
