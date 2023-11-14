@@ -114,11 +114,17 @@ def removeUnnecessaryData(data, tBill=False):
         return newData
     
 def read_data(filename):
-    f = open(filename, "r")
-    data = f.read()
-    f.close()
-
-    return data
+    if not os.path.exists(filename):
+        f = open(filename, "w")
+        f.close()
+        
+        return ""
+    else:
+        f = open(filename, "r")
+        data = f.read()
+        f.close()
+        
+        return data
 
 def percentageChange(open, close):
     return (close - open) / open
