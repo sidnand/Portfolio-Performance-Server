@@ -9,7 +9,7 @@ PORT = 8000
 
 class APIServerHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
-        if self.path == '/sp_sector':
+        if self.path == '/spsector':
             self.send_response(200)
             
             self.send_header('Content-type', 'application/json')
