@@ -1,9 +1,7 @@
 import datetime
 import os
-from io import StringIO
 import pandas as pd
 import numpy as np
-import requests
 import yfinance as yf
 
 
