@@ -4,6 +4,8 @@ import pandas as pd
 import numpy as np
 import yfinance as yf
 
+from util import update, read_data, percentage_change
+
 
 tickers = {
     "T_BILL_3_MO": "^IRX",
@@ -34,7 +36,7 @@ def download():
     for key, val in tickers.items():
         data = yf.download(val, start='1994-01-01')
         all_data[key] = data
-        
+
     return all_data
 
 def to_monthly_data(data):
@@ -83,14 +85,14 @@ def combine_data(data):
 
     return header, combined_data
 
-def process_data(sector, header, data):
+def process_data(header, data):
     date = data[:, 0]
-    tBill = data[:, 1]
+    t_bill = data[:, 1]
     indices = data[:, 2:]
 
-    diff = indices - tBill[:, np.newaxis]
+    diff = indices - t_bill[:, np.newaxis]
 
-    out_data = np.column_stack((tBill, diff))
+    out_data = np.column_stack((t_bill, diff))
 
     if not os.path.exists(EXPORT_PATH):
         os.mkdir(EXPORT_PATH)
@@ -101,48 +103,30 @@ def process_data(sector, header, data):
 
     return out_data
 
-def removeUnnecessaryData(data, tBill=False):
-    if (tBill):
+def removeUnnecessaryData(data, t_bill=False):
+    if (t_bill):
         data[:, ADJ_CLOSE] = data[:, ADJ_CLOSE] / 100
         newData = np.column_stack((data[:, DATE], data[:, ADJ_CLOSE]))
         return newData
     else:
-        newData = percentageChange(data[:, OPEN], data[:, ADJ_CLOSE])
+        newData = percentage_change(data[:, OPEN], data[:, ADJ_CLOSE])
         newData = np.column_stack((data[:, DATE], newData))
         return newData
-    
-def read_data(filename):
-    if not os.path.exists(filename):
-        f = open(filename, "w")
-        f.close()
-        
-        return ""
-    else:
-        f = open(filename, "r")
-        data = f.read()
-        f.close()
-        
-        return data
-
-def percentageChange(open, close):
-    return (close - open) / open
 
 
 def get_sp_sector():
-    last_update = read_data(LAST_UPDATE_PATH)
-
-    if len(last_update) == 0 or str(last_update) != str(now.date()):
+    if update():
         print("Downloading data...")
         all_data = download()
         monthly_data = to_monthly_data(all_data)
         cleaned_data = clean_data(monthly_data)
         header, combined_data = combine_data(cleaned_data)
-        out_data = process_data("spsector", header, combined_data)
+        out_data = process_data(header, combined_data)
 
         out_data.to_csv(os.path.join(EXPORT_PATH, "spsector.csv"))
 
         f = open(LAST_UPDATE_PATH, "w")
-        f.write(str(now.date()))
+        f.write(str(datetime.datetime.now().date()))
         f.close()
         
     print("Data up to date.")
