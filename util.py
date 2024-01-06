@@ -36,3 +36,8 @@ def read_data(filename):
     
 def percentage_change(open, close):
     return (close - open) / open
+
+def move_column(df, column_name, position):
+    cols = list(df)
+    cols.insert(position, cols.pop(cols.index(column_name)))
+    return df.loc[:, cols]
