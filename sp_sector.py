@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import yfinance as yf
 
-from util import update, read_data, percentage_change
+from util import *
 
 
 tickers = {
@@ -28,7 +28,6 @@ OPEN = 1
 ADJ_CLOSE = 5
 
 LAST_UPDATE_PATH = os.path.join("./data/last_update.txt")
-EXPORT_PATH = os.path.join("./data")
 
 def download():
     all_data = {}
@@ -116,7 +115,7 @@ def removeUnnecessaryData(data, t_bill=False):
 
 def get_sp_sector():
     if update("spsector"):
-        print("Downloading data...")
+        print("Downloading spsector data...")
         all_data = download()
         monthly_data = to_monthly_data(all_data)
         cleaned_data = clean_data(monthly_data)
