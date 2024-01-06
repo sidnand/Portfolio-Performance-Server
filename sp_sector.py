@@ -115,7 +115,7 @@ def removeUnnecessaryData(data, t_bill=False):
 
 
 def get_sp_sector():
-    if update():
+    if update("spsector"):
         print("Downloading data...")
         all_data = download()
         monthly_data = to_monthly_data(all_data)
@@ -124,10 +124,6 @@ def get_sp_sector():
         out_data = process_data(header, combined_data)
 
         out_data.to_csv(os.path.join(EXPORT_PATH, "spsector.csv"))
-
-        f = open(LAST_UPDATE_PATH, "w")
-        f.write(str(datetime.datetime.now().date()))
-        f.close()
         
     print("Data up to date.")
     
