@@ -89,11 +89,13 @@ def get_25_3():
         factors = pd.read_csv(os.path.join(EXPORT_PATH, "3_factors.csv"), index_col=0)
         portfolio = pd.read_csv(os.path.join(EXPORT_PATH, "25_portfolio.csv"), index_col=0)
 
+        portfolio['RF'] = factors['RF']
         portfolio['SMB'] = factors['SMB']
         portfolio['HML'] = factors['HML']
         portfolio['Mkt-RF'] = factors['Mkt-RF']
         
         portfolio.dropna(inplace=True)
+        portfolio = move_column(portfolio, 'RF', 0)
     
         portfolio.to_csv(os.path.join(EXPORT_PATH, "25_3.csv"))
 
@@ -103,7 +105,32 @@ def get_25_3():
     return data
 
 def get_25_4():
-    pass
+    get_25_portfolio()
+    get_3_factors()
+    get_mom_factor()
+
+    if update("25_4"):
+        print("Compiling 25_4 data...")
+
+        factors = pd.read_csv(os.path.join(EXPORT_PATH, "3_factors.csv"), index_col=0)
+        portfolio = pd.read_csv(os.path.join(EXPORT_PATH, "25_portfolio.csv"), index_col=0)
+        mom = pd.read_csv(os.path.join(EXPORT_PATH, "mom_factor.csv"), index_col=0)
+
+        portfolio['RF'] = factors['RF']
+        portfolio['SMB'] = factors['SMB']
+        portfolio['HML'] = factors['HML']
+        portfolio['Mkt-RF'] = factors['Mkt-RF']
+        portfolio['Mom'] = mom
+
+        portfolio.dropna(inplace=True)
+        portfolio = move_column(portfolio, 'RF', 0)
+
+        portfolio.to_csv(os.path.join(EXPORT_PATH, "25_4.csv"))
+
+    print("Data up to date.")
+
+    data = read_data(os.path.join(EXPORT_PATH, "25_4.csv"))
+    return data
 
 def get_mom_factor():
     return get("mom_factor", URL_MOM_FACTOR)
@@ -138,3 +165,5 @@ def get(type, url):
 
     data = read_data(os.path.join(EXPORT_PATH, f"{type}.csv"))
     return data
+
+get_25_4()

@@ -31,7 +31,9 @@ class APIServerHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps(data).encode())
 
         elif self.path == '/25_4':
-            pass
+            data = get_25_4()
+            self.wfile.write(json.dumps(data).encode())
+
         elif self.path == '/ff4':
             data = get_3_factors()
             self.wfile.write(json.dumps(data).encode())
