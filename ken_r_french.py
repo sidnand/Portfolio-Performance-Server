@@ -9,6 +9,7 @@ from util import *
 URL_25_PORTFOLIO =  "https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/25_Portfolios_5x5_CSV.zip"
 URL_10_INDUSTRY = "https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/10_Industry_Portfolios_CSV.zip"
 URL_3_FACTORS = "https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/Developed_3_Factors_CSV.zip"
+URL_MOM_FACTOR = "https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/F-F_Momentum_Factor_CSV.zip"
 
 def download(url):
     response = requests.get(url)
@@ -104,13 +105,27 @@ def get_25_3():
 def get_25_4():
     pass
 
+def get_mom_factor():
+    return get("mom_factor", URL_MOM_FACTOR)
+
 def get(type, url):
     if update(type):
         print(f"Downloading {type} data...")
         
         data = download(url)
-        data_start = data.find("Average Value Weighted Returns -- Monthly") if type != "3_factors" else data.find("Missing data are indicated by -99.99.")
-        data_end = data.find("Average Equal Weighted Returns -- Monthly") if type != "3_factors" else data.find("Annual Factors: January-December")
+        if type == "3_factors":
+            data_start = data.find("Missing data are indicated by -99.99.")
+        elif type == "mom_factor":
+            data_start = data.find("Missing data are indicated by -99.99 or -999.")
+        else:
+            data_start = data.find("Average Value Weighted Returns -- Monthly")
+
+        if type == "3_factors":
+            data_end = data.find("Annual Factors: January-December")
+        elif type == "mom_factor":
+            data_end = data.find("Annual Factors:")
+        else:
+            data_end = data.find("Average Equal Weighted Returns -- Monthly")
         
         data = data[data_start:data_end]
         df = pd.read_csv(StringIO(data), skiprows=1, engine='python', index_col=0)
