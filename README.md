@@ -10,4 +10,4 @@ This an API server which is used to fetch the latest data used in the Portfolio 
 python main.py # open the server at port 8000
 ```
 
-2. Insert `http://localhost:8000/` into `Server URL` input on [Portfolio-Optimization-Interface](https://sidnand.github.io/Portfolio-Optimization-Interface/)
+2. Insert `http://localhost:8000/` into `Server URL` input on [Portfolio-Lab](https://sidnand.github.io/Portfolio-Lab/)
