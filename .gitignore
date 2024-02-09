@@ -1,4 +1,4 @@
 __pycache__/
 .DS_Store
 .python-version
-data/
+data/*.csv
